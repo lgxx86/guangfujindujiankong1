@@ -1,0 +1,1245 @@
+{
+ "name": "大密扣升压站土建、安装工程",
+ "goal": "2026-11-20 满足并网发电条件",
+ "totalDays": 159,
+ "planStart": "2026-07-20",
+ "planEnd": "2026-12-26",
+ "gridDate": "2026-11-20",
+ "sections": [
+  {
+   "name": "场平工程",
+   "tasks": [
+    {
+     "id": "T01",
+     "seq": 1,
+     "name": "南侧桩板墙",
+     "planStart": "2026-08-01",
+     "duration": 30,
+     "planEnd": "2026-08-30",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T02",
+     "seq": 2,
+     "name": "锚索施工",
+     "planStart": "2026-09-01",
+     "duration": 15,
+     "planEnd": "2026-09-15",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T01"
+     ]
+    },
+    {
+     "id": "T03",
+     "seq": 3,
+     "name": "挡土板、冠梁",
+     "planStart": "2026-09-16",
+     "duration": 15,
+     "planEnd": "2026-09-30",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T02"
+     ]
+    },
+    {
+     "id": "T04",
+     "seq": 4,
+     "name": "格构护坡",
+     "planStart": "2026-08-15",
+     "duration": 60,
+     "planEnd": "2026-10-13",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    }
+   ]
+  },
+  {
+   "name": "预制舱基础",
+   "tasks": [
+    {
+     "id": "T05",
+     "seq": 1,
+     "name": "土方开挖",
+     "planStart": "2026-07-20",
+     "duration": 3,
+     "planEnd": "2026-07-22",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T06",
+     "seq": 2,
+     "name": "垫层浇筑、放线",
+     "planStart": "2026-07-23",
+     "duration": 1,
+     "planEnd": "2026-07-23",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T05"
+     ]
+    },
+    {
+     "id": "T07",
+     "seq": 3,
+     "name": "筏板钢筋绑扎、模板安装",
+     "planStart": "2026-07-24",
+     "duration": 3,
+     "planEnd": "2026-07-26",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T06"
+     ]
+    },
+    {
+     "id": "T08",
+     "seq": 4,
+     "name": "筏板浇筑",
+     "planStart": "2026-07-27",
+     "duration": 1,
+     "planEnd": "2026-07-27",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T07"
+     ]
+    },
+    {
+     "id": "T09",
+     "seq": 5,
+     "name": "框架柱、梁钢筋绑扎、模板安装",
+     "planStart": "2026-07-28",
+     "duration": 7,
+     "planEnd": "2026-08-03",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T08"
+     ]
+    },
+    {
+     "id": "T10",
+     "seq": 6,
+     "name": "梁柱、楼梯平台混凝土浇筑",
+     "planStart": "2026-08-04",
+     "duration": 1,
+     "planEnd": "2026-08-04",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T09"
+     ]
+    },
+    {
+     "id": "T11",
+     "seq": 7,
+     "name": "拆模、清理、养护",
+     "planStart": "2026-08-05",
+     "duration": 28,
+     "planEnd": "2026-09-01",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T10"
+     ]
+    },
+    {
+     "id": "T12",
+     "seq": null,
+     "name": "预制舱吊装",
+     "planStart": "2026-09-02",
+     "duration": 10,
+     "planEnd": "2026-09-11",
+     "remark": "开关柜交接试验，开关柜耐压试验",
+     "milestone": true,
+     "deps": [
+      "T11"
+     ]
+    },
+    {
+     "id": "T13",
+     "seq": 8,
+     "name": "预制舱外围墙体砌筑、抹灰及砌体养护",
+     "planStart": "2026-09-12",
+     "duration": 10,
+     "planEnd": "2026-09-21",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T12"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "事故油池",
+   "tasks": [
+    {
+     "id": "T14",
+     "seq": 1,
+     "name": "土方开挖、垫层浇筑",
+     "planStart": "2026-08-01",
+     "duration": 2,
+     "planEnd": "2026-08-02",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T15",
+     "seq": 2,
+     "name": "底板及侧墙钢筋绑扎",
+     "planStart": "2026-08-03",
+     "duration": 4,
+     "planEnd": "2026-08-06",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T14"
+     ]
+    },
+    {
+     "id": "T16",
+     "seq": 3,
+     "name": "底板、侧墙吊模安装",
+     "planStart": "2026-08-07",
+     "duration": 3,
+     "planEnd": "2026-08-09",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T15"
+     ]
+    },
+    {
+     "id": "T17",
+     "seq": 4,
+     "name": "底板混凝土浇筑",
+     "planStart": "2026-08-10",
+     "duration": 1,
+     "planEnd": "2026-08-10",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T16"
+     ]
+    },
+    {
+     "id": "T18",
+     "seq": 5,
+     "name": "侧墙钢筋绑扎、架体搭设、顶板模板安装",
+     "planStart": "2026-08-11",
+     "duration": 2,
+     "planEnd": "2026-08-12",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T17"
+     ]
+    },
+    {
+     "id": "T19",
+     "seq": 6,
+     "name": "侧墙模板安装、顶板钢筋绑扎",
+     "planStart": "2026-08-13",
+     "duration": 2,
+     "planEnd": "2026-08-14",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T18"
+     ]
+    },
+    {
+     "id": "T20",
+     "seq": 7,
+     "name": "混凝土浇筑",
+     "planStart": "2026-08-15",
+     "duration": 1,
+     "planEnd": "2026-08-15",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T19"
+     ]
+    },
+    {
+     "id": "T21",
+     "seq": 8,
+     "name": "养护、拆模、回填",
+     "planStart": "2026-08-16",
+     "duration": 28,
+     "planEnd": "2026-09-12",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T20"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "主变及主变构架基础、管母、油色谱、中性点、检修箱基础",
+   "tasks": [
+    {
+     "id": "T22",
+     "seq": 1,
+     "name": "土方开挖",
+     "planStart": "2026-08-01",
+     "duration": 3,
+     "planEnd": "2026-08-03",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T23",
+     "seq": 2,
+     "name": "垫层浇筑、放线",
+     "planStart": "2026-08-04",
+     "duration": 2,
+     "planEnd": "2026-08-05",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T22"
+     ]
+    },
+    {
+     "id": "T24",
+     "seq": 3,
+     "name": "主变筏板、构架基础钢筋绑扎、模板安装",
+     "planStart": "2026-08-06",
+     "duration": 3,
+     "planEnd": "2026-08-08",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T23"
+     ]
+    },
+    {
+     "id": "T25",
+     "seq": 4,
+     "name": "主变筏板、构架基础下台浇筑",
+     "planStart": "2026-08-09",
+     "duration": 1,
+     "planEnd": "2026-08-09",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T24"
+     ]
+    },
+    {
+     "id": "T26",
+     "seq": 5,
+     "name": "主变墩基钢筋绑扎",
+     "planStart": "2026-08-10",
+     "duration": 2,
+     "planEnd": "2026-08-11",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T25"
+     ]
+    },
+    {
+     "id": "T27",
+     "seq": 6,
+     "name": "主变墩基、构架上台模板安装",
+     "planStart": "2026-08-12",
+     "duration": 2,
+     "planEnd": "2026-08-13",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T30"
+     ]
+    },
+    {
+     "id": "T28",
+     "seq": 7,
+     "name": "主变墩基及构架上台混凝土浇筑",
+     "planStart": "2026-08-14",
+     "duration": 1,
+     "planEnd": "2026-08-14",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T27"
+     ]
+    },
+    {
+     "id": "T29",
+     "seq": 8,
+     "name": "养护、拆模、回填",
+     "planStart": "2026-08-15",
+     "duration": 28,
+     "planEnd": "2026-09-11",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T28"
+     ]
+    },
+    {
+     "id": "T30",
+     "seq": 9,
+     "name": "油池场地平整、钢筋绑扎、浇筑",
+     "planStart": "2026-08-10",
+     "duration": 3,
+     "planEnd": "2026-08-12",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T25"
+     ]
+    },
+    {
+     "id": "T31",
+     "seq": 10,
+     "name": "油池侧壁砌筑、抹灰",
+     "planStart": "2026-08-15",
+     "duration": 3,
+     "planEnd": "2026-08-17",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T28"
+     ]
+    },
+    {
+     "id": "T32",
+     "seq": 11,
+     "name": "格栅支墩制作、格栅安装、卵石铺设",
+     "planStart": "2026-09-15",
+     "duration": 5,
+     "planEnd": "2026-09-19",
+     "remark": "主变安装后实施",
+     "milestone": false,
+     "deps": [
+      "T35"
+     ]
+    },
+    {
+     "id": "T33",
+     "seq": 12,
+     "name": "中性点基础、油色谱基础、管母基础、检修箱、端子箱基础",
+     "planStart": "2026-09-15",
+     "duration": 5,
+     "planEnd": "2026-09-19",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T35"
+     ]
+    },
+    {
+     "id": "T34",
+     "seq": 13,
+     "name": "养护、拆模、回填",
+     "planStart": "2026-09-20",
+     "duration": 28,
+     "planEnd": "2026-10-17",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T32"
+     ]
+    },
+    {
+     "id": "T35",
+     "seq": null,
+     "name": "主变吊装",
+     "planStart": "2026-09-12",
+     "duration": 3,
+     "planEnd": "2026-09-14",
+     "remark": "直流电阻及主变耐压激放试验",
+     "milestone": true,
+     "deps": [
+      "T29"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "站用变、避雷针基础",
+   "tasks": [
+    {
+     "id": "T36",
+     "seq": 1,
+     "name": "土方开挖、垫层浇筑",
+     "planStart": "2026-08-01",
+     "duration": 2,
+     "planEnd": "2026-08-02",
+     "remark": "零散基础，先施工容易影响交通、场地等，故放在生产区靠后时间段",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T37",
+     "seq": 2,
+     "name": "钢筋绑扎",
+     "planStart": "2026-08-03",
+     "duration": 5,
+     "planEnd": "2026-08-07",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T36"
+     ]
+    },
+    {
+     "id": "T38",
+     "seq": 3,
+     "name": "模板安装",
+     "planStart": "2026-08-08",
+     "duration": 4,
+     "planEnd": "2026-08-11",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T37"
+     ]
+    },
+    {
+     "id": "T39",
+     "seq": 4,
+     "name": "混凝土浇筑",
+     "planStart": "2026-08-12",
+     "duration": 2,
+     "planEnd": "2026-08-13",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T38"
+     ]
+    },
+    {
+     "id": "T40",
+     "seq": 5,
+     "name": "养护、拆模、回填",
+     "planStart": "2026-08-14",
+     "duration": 28,
+     "planEnd": "2026-09-10",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T39"
+     ]
+    },
+    {
+     "id": "T41",
+     "seq": null,
+     "name": "避雷针安装",
+     "planStart": "2026-09-11",
+     "duration": 3,
+     "planEnd": "2026-09-13",
+     "remark": "接地电阻试验",
+     "milestone": true,
+     "deps": [
+      "T40"
+     ]
+    },
+    {
+     "id": "T42",
+     "seq": null,
+     "name": "站用变安装",
+     "planStart": "2026-09-14",
+     "duration": 3,
+     "planEnd": "2026-09-16",
+     "remark": "直流电阻及主变耐压试验",
+     "milestone": true,
+     "deps": [
+      "T41"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GIS及出线构架基础",
+   "tasks": [
+    {
+     "id": "T43",
+     "seq": 1,
+     "name": "土方开挖、垫层浇筑",
+     "planStart": "2026-09-16",
+     "duration": 2,
+     "planEnd": "2026-09-17",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T44",
+     "seq": 2,
+     "name": "构架基础钢筋绑扎",
+     "planStart": "2026-09-19",
+     "duration": 2,
+     "planEnd": "2026-09-20",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T43"
+     ]
+    },
+    {
+     "id": "T45",
+     "seq": 3,
+     "name": "构架基础模板安装",
+     "planStart": "2026-09-21",
+     "duration": 3,
+     "planEnd": "2026-09-23",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T44"
+     ]
+    },
+    {
+     "id": "T46",
+     "seq": 4,
+     "name": "构架基础混凝土浇筑",
+     "planStart": "2026-09-24",
+     "duration": 1,
+     "planEnd": "2026-09-24",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T45"
+     ]
+    },
+    {
+     "id": "T47",
+     "seq": 5,
+     "name": "GIS钢筋绑扎",
+     "planStart": "2026-09-27",
+     "duration": 2,
+     "planEnd": "2026-09-28",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T46"
+     ]
+    },
+    {
+     "id": "T48",
+     "seq": 6,
+     "name": "GIS模板安装及混凝土浇筑",
+     "planStart": "2026-09-29",
+     "duration": 3,
+     "planEnd": "2026-10-01",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T47"
+     ]
+    },
+    {
+     "id": "T49",
+     "seq": 7,
+     "name": "养护、拆模、回填",
+     "planStart": "2026-10-02",
+     "duration": 14,
+     "planEnd": "2026-10-15",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T48"
+     ]
+    },
+    {
+     "id": "T50",
+     "seq": null,
+     "name": "GIS及出线构架安装",
+     "planStart": "2026-10-16",
+     "duration": 3,
+     "planEnd": "2026-10-18",
+     "remark": "断路器，电压互感器，电流互感器，隔离开关交接试验及耐压激放试验",
+     "milestone": true,
+     "deps": [
+      "T49"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "接地变、SVG设备基础",
+   "tasks": [
+    {
+     "id": "T51",
+     "seq": 1,
+     "name": "土方开挖、垫层浇筑",
+     "planStart": "2026-09-16",
+     "duration": 2,
+     "planEnd": "2026-09-17",
+     "remark": "基础分散，分批流水施工",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T52",
+     "seq": 2,
+     "name": "钢筋绑扎",
+     "planStart": "2026-09-18",
+     "duration": 2,
+     "planEnd": "2026-09-19",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T51"
+     ]
+    },
+    {
+     "id": "T53",
+     "seq": 3,
+     "name": "模板安装",
+     "planStart": "2026-09-20",
+     "duration": 3,
+     "planEnd": "2026-09-22",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T52"
+     ]
+    },
+    {
+     "id": "T54",
+     "seq": 4,
+     "name": "混凝土浇筑",
+     "planStart": "2026-09-23",
+     "duration": 7,
+     "planEnd": "2026-09-29",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T53"
+     ]
+    },
+    {
+     "id": "T55",
+     "seq": 5,
+     "name": "养护、拆模、回填",
+     "planStart": "2026-09-30",
+     "duration": 14,
+     "planEnd": "2026-10-13",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T54"
+     ]
+    },
+    {
+     "id": "T56",
+     "seq": null,
+     "name": "接地变、SVG设备安装",
+     "planStart": "2026-10-14",
+     "duration": 7,
+     "planEnd": "2026-10-20",
+     "remark": "常规试验及耐压试验",
+     "milestone": true,
+     "deps": [
+      "T55"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "电缆沟",
+   "tasks": [
+    {
+     "id": "T57",
+     "seq": 1,
+     "name": "与设备基础穿插进行进行",
+     "planStart": "2026-08-15",
+     "duration": 35,
+     "planEnd": "2026-09-18",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T58",
+     "seq": 2,
+     "name": "电缆沟支架安装",
+     "planStart": "2026-09-19",
+     "duration": 7,
+     "planEnd": "2026-09-25",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T57"
+     ]
+    },
+    {
+     "id": "T59",
+     "seq": null,
+     "name": "安装调试、联动调试",
+     "planStart": "2026-10-21",
+     "duration": 31,
+     "planEnd": "2026-11-20",
+     "remark": "传动联调试验",
+     "milestone": true,
+     "deps": []
+    },
+    {
+     "id": "T60",
+     "seq": null,
+     "name": "满足并网发电条件",
+     "planStart": "2026-11-20",
+     "duration": null,
+     "planEnd": "2026-11-20",
+     "remark": "",
+     "milestone": true,
+     "deps": [
+      "T59"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "综合楼",
+   "tasks": [
+    {
+     "id": "T61",
+     "seq": 1,
+     "name": "土方开挖",
+     "planStart": "2026-08-05",
+     "duration": 4,
+     "planEnd": "2026-08-08",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T62",
+     "seq": 2,
+     "name": "垫层浇筑、定位放线",
+     "planStart": "2026-08-09",
+     "duration": 2,
+     "planEnd": "2026-08-10",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T61"
+     ]
+    },
+    {
+     "id": "T63",
+     "seq": 3,
+     "name": "基础工程",
+     "planStart": "2026-08-11",
+     "duration": 15,
+     "planEnd": "2026-08-25",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T62"
+     ]
+    },
+    {
+     "id": "T64",
+     "seq": 4,
+     "name": "一层结构",
+     "planStart": "2026-09-01",
+     "duration": 7,
+     "planEnd": "2026-09-07",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T65",
+     "seq": 5,
+     "name": "二层结构",
+     "planStart": "2026-09-21",
+     "duration": 7,
+     "planEnd": "2026-09-27",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T66"
+     ]
+    },
+    {
+     "id": "T66",
+     "seq": 6,
+     "name": "一层拆模、清理",
+     "planStart": "2026-09-15",
+     "duration": 7,
+     "planEnd": "2026-09-21",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T67",
+     "seq": 7,
+     "name": "一层砌筑、水电安装",
+     "planStart": "2026-09-24",
+     "duration": 15,
+     "planEnd": "2026-10-08",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T66"
+     ]
+    },
+    {
+     "id": "T68",
+     "seq": 8,
+     "name": "二层拆模、清理",
+     "planStart": "2026-10-05",
+     "duration": 7,
+     "planEnd": "2026-10-11",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T69",
+     "seq": 9,
+     "name": "二层砌筑、水电安装",
+     "planStart": "2026-10-14",
+     "duration": 15,
+     "planEnd": "2026-10-28",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T68"
+     ]
+    },
+    {
+     "id": "T70",
+     "seq": 10,
+     "name": "一层内抹灰",
+     "planStart": "2026-10-18",
+     "duration": 7,
+     "planEnd": "2026-10-24",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T71",
+     "seq": 11,
+     "name": "二层内抹灰",
+     "planStart": "2026-11-07",
+     "duration": 7,
+     "planEnd": "2026-11-13",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T72",
+     "seq": 12,
+     "name": "外墙抹灰、防水、腻子涂料",
+     "planStart": "2026-10-19",
+     "duration": 30,
+     "planEnd": "2026-11-17",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T73",
+     "seq": 12,
+     "name": "涂料吊顶、墙地砖、水电、门窗栏杆等装饰装修工程、屋面工程",
+     "planStart": "2026-10-24",
+     "duration": 40,
+     "planEnd": "2026-12-02",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T70"
+     ]
+    },
+    {
+     "id": "T74",
+     "seq": 13,
+     "name": "外架拆除",
+     "planStart": "2026-11-20",
+     "duration": 3,
+     "planEnd": "2026-11-22",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T72"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "附属用房",
+   "tasks": [
+    {
+     "id": "T75",
+     "seq": 1,
+     "name": "土方开挖",
+     "planStart": "2026-08-09",
+     "duration": 7,
+     "planEnd": "2026-08-15",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T76",
+     "seq": 2,
+     "name": "垫层浇筑",
+     "planStart": "2026-08-16",
+     "duration": 2,
+     "planEnd": "2026-08-17",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T75"
+     ]
+    },
+    {
+     "id": "T77",
+     "seq": 3,
+     "name": "底板防水",
+     "planStart": "2026-08-18",
+     "duration": 4,
+     "planEnd": "2026-08-21",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T76"
+     ]
+    },
+    {
+     "id": "T78",
+     "seq": 4,
+     "name": "底板保护层",
+     "planStart": "2026-08-22",
+     "duration": 1,
+     "planEnd": "2026-08-22",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T77"
+     ]
+    },
+    {
+     "id": "T79",
+     "seq": 5,
+     "name": "筏板基础结构",
+     "planStart": "2026-08-23",
+     "duration": 10,
+     "planEnd": "2026-09-01",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T78"
+     ]
+    },
+    {
+     "id": "T80",
+     "seq": 6,
+     "name": "负一层结构",
+     "planStart": "2026-09-08",
+     "duration": 10,
+     "planEnd": "2026-09-17",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T81",
+     "seq": 7,
+     "name": "负一层拆模",
+     "planStart": "2026-09-27",
+     "duration": 3,
+     "planEnd": "2026-09-29",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T82",
+     "seq": 8,
+     "name": "地下室外墙防水、保护层、回填",
+     "planStart": "2026-09-20",
+     "duration": 10,
+     "planEnd": "2026-09-29",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T80"
+     ]
+    },
+    {
+     "id": "T83",
+     "seq": 9,
+     "name": "一层结构",
+     "planStart": "2026-09-29",
+     "duration": 6,
+     "planEnd": "2026-10-04",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T82"
+     ]
+    },
+    {
+     "id": "T84",
+     "seq": 10,
+     "name": "一层拆模、清理",
+     "planStart": "2026-10-11",
+     "duration": 5,
+     "planEnd": "2026-10-15",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T85",
+     "seq": 11,
+     "name": "地下室防水、抹灰及地坪",
+     "planStart": "2026-10-06",
+     "duration": 15,
+     "planEnd": "2026-10-20",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T83"
+     ]
+    },
+    {
+     "id": "T86",
+     "seq": 12,
+     "name": "一层砌筑",
+     "planStart": "2026-10-16",
+     "duration": 7,
+     "planEnd": "2026-10-22",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T84"
+     ]
+    },
+    {
+     "id": "T87",
+     "seq": 13,
+     "name": "一层抹灰",
+     "planStart": "2026-11-05",
+     "duration": 5,
+     "planEnd": "2026-11-09",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T88",
+     "seq": 14,
+     "name": "涂料吊顶、墙地砖、水电、门窗栏杆等装饰装修工程、屋面工程",
+     "planStart": "2026-10-20",
+     "duration": 30,
+     "planEnd": "2026-11-18",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T85"
+     ]
+    },
+    {
+     "id": "T89",
+     "seq": 15,
+     "name": "外墙抹灰、防水、腻子涂料",
+     "planStart": "2026-11-05",
+     "duration": 20,
+     "planEnd": "2026-11-24",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T90",
+     "seq": 16,
+     "name": "外架拆除",
+     "planStart": "2026-11-25",
+     "duration": 2,
+     "planEnd": "2026-11-26",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T89"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "危废品间",
+   "tasks": [
+    {
+     "id": "T91",
+     "seq": 1,
+     "name": "在附属楼与综合楼期间穿插完成",
+     "planStart": "2026-08-17",
+     "duration": 94,
+     "planEnd": "2026-11-18",
+     "remark": "因不便单独实施废旧间门窗、防水涂料等工序，故装饰装修与生活区建筑同步",
+     "milestone": false,
+     "deps": []
+    }
+   ]
+  },
+  {
+   "name": "围墙",
+   "tasks": [
+    {
+     "id": "T92",
+     "seq": 1,
+     "name": "砌筑抹灰装饰装修",
+     "planStart": "2026-10-08",
+     "duration": 35,
+     "planEnd": "2026-11-11",
+     "remark": "",
+     "milestone": false,
+     "deps": []
+    }
+   ]
+  },
+  {
+   "name": "室外总平附属工程：绿化、道路地坪等",
+   "tasks": [
+    {
+     "id": "T93",
+     "seq": 1,
+     "name": "生产区道路、场地碎石",
+     "planStart": "2026-11-27",
+     "duration": 15,
+     "planEnd": "2026-12-11",
+     "remark": "具体需结合安装进度确定实施时间",
+     "milestone": false,
+     "deps": []
+    },
+    {
+     "id": "T94",
+     "seq": 2,
+     "name": "办公区绿化、道路、广场",
+     "planStart": "2026-12-12",
+     "duration": 15,
+     "planEnd": "2026-12-26",
+     "remark": "",
+     "milestone": false,
+     "deps": [
+      "T93"
+     ]
+    }
+   ]
+  }
+ ]
+}
