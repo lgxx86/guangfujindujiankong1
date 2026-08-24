@@ -3,9 +3,10 @@ import { useMemo, useState } from 'react';
 import type { Task } from '@/types';
 import { useStore, seed } from '@/lib/store';
 import { allTasks, taskStatus, propagation, downstreamMap, today, toDate, diffDays, delayDays } from '@/lib/analysis';
+import { Info } from 'lucide-react';
 
 const DAY_W = 15;      // 每天像素
-const ROW_H = 34;      // 行高
+const ROW_H = 36;      // 行高
 const LABEL_W = 230;   // 左侧名称列宽
 
 // 从项目数据动态计算甘特图日期范围（左右各留 15 天余量）
@@ -65,10 +66,13 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
 
   // 月份刻度
   const monthTicks = useMemo(() => {
-    const ticks: { x: number; label: string }[] = [];
+    const ticks: { x: number; label: string; year?: number }[] = [];
     const d = new Date(RANGE_START);
+    let lastYear = -1;
     while (d <= RANGE_END) {
-      ticks.push({ x: xOf(d), label: `${MONTHS[d.getMonth()]}` });
+      const y = d.getFullYear();
+      ticks.push({ x: xOf(d), label: `${MONTHS[d.getMonth()]}`, year: y !== lastYear ? y : undefined });
+      lastYear = y;
       d.setMonth(d.getMonth() + 1);
     }
     return ticks;
@@ -83,33 +87,63 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
     return { act, status, ps, pe, progress, dd };
   };
 
+  const legends = [
+    { cls: 'bg-gradient-to-r from-slate-300 to-slate-400', label: '计划' },
+    { cls: 'bg-gradient-to-r from-emerald-400 to-emerald-500', label: '实际(正常)' },
+    { cls: 'bg-gradient-to-r from-red-400 to-red-500', label: '延期' },
+    { cls: 'bg-amber-500 rotate-45 w-3 h-3', label: '里程碑', diamond: true },
+    { cls: 'bg-red-500 w-0.5 h-3.5', label: '今日', bar: true },
+  ];
+
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center gap-3 text-xs">
-        <label className="flex items-center gap-1 cursor-pointer">
-          <input type="checkbox" checked={showCritical} onChange={e => setShowCritical(e.target.checked)} />
-          <span className="text-amber-700 font-medium">显示关键线路（影响并网的工序链）</span>
+    <div className="space-y-3">
+      {/* 工具栏 + 图例 */}
+      <div className="flex flex-wrap items-center gap-3 text-xs bg-white border border-slate-200 rounded-xl px-3 py-2.5 shadow-sm">
+        <label className="flex items-center gap-1.5 cursor-pointer select-none group">
+          <span className="relative w-4 h-4">
+            <input type="checkbox" checked={showCritical} onChange={e => setShowCritical(e.target.checked)} className="peer sr-only" />
+            <span className="absolute inset-0 rounded border border-slate-300 peer-checked:bg-brand-gradient peer-checked:border-brand-mid transition-colors" />
+            <svg className="absolute inset-0 w-4 h-4 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8l3.5 3.5L13 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="text-amber-700 font-medium group-hover:text-amber-800">显示关键线路（影响并网的工序链）</span>
         </label>
-        <span className="flex items-center gap-1"><i className="inline-block w-6 h-2.5 bg-slate-300 rounded" />计划</span>
-        <span className="flex items-center gap-1"><i className="inline-block w-6 h-2.5 bg-green-500 rounded" />实际(正常)</span>
-        <span className="flex items-center gap-1"><i className="inline-block w-6 h-2.5 bg-red-500 rounded" />延期</span>
-        <span className="flex items-center gap-1"><i className="inline-block w-3 h-3 rotate-45 bg-amber-500" />里程碑</span>
-        <span className="flex items-center gap-1"><i className="inline-block w-0.5 h-3.5 bg-red-600" />今日</span>
+        <div className="h-4 w-px bg-slate-200" />
+        <div className="flex flex-wrap items-center gap-3">
+          {legends.map((lg, i) => (
+            <span key={i} className="flex items-center gap-1">
+              {lg.diamond ? (
+                <i className={`inline-block w-3 h-3 rotate-45 ${lg.cls.split(' ')[0]}`} />
+              ) : lg.bar ? (
+                <i className={`inline-block w-0.5 h-3.5 bg-red-500`} />
+              ) : (
+                <i className={`inline-block w-6 h-2.5 rounded ${lg.cls}`} />
+              )}
+              <span className="text-slate-600">{lg.label}</span>
+            </span>
+          ))}
+        </div>
         {selected && (
-          <button className="text-blue-600 underline" onClick={() => setSelected(null)}>取消传导高亮</button>
+          <button className="ml-auto text-brand-mid hover:text-brand-bright underline underline-offset-2 transition-colors" onClick={() => setSelected(null)}>
+            取消传导高亮
+          </button>
         )}
       </div>
 
-      <div className="border rounded-lg overflow-auto max-h-[65vh] bg-white">
+      <div className="border border-slate-200 rounded-xl overflow-auto max-h-[65vh] bg-white shadow-sm scrollbar-slim">
         <div style={{ width: LABEL_W + width, minWidth: '100%' }}>
           {/* 表头：月份 */}
-          <div className="flex sticky top-0 z-20 bg-slate-100 border-b">
-            <div className="sticky left-0 z-30 bg-slate-100 border-r text-xs font-medium flex items-center px-2" style={{ width: LABEL_W, height: 28 }}>
-              施工任务（点击任务查看延期传导）
+          <div className="flex sticky top-0 z-20 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+            <div className="sticky left-0 z-30 bg-slate-100 border-r border-slate-200 text-xs font-semibold text-slate-700 flex items-center px-3" style={{ width: LABEL_W, height: 32 }}>
+              施工任务
+              <span className="text-slate-400 font-normal ml-1">（点击查看延期传导）</span>
             </div>
-            <div className="relative" style={{ width, height: 28 }}>
-              {monthTicks.map(t => (
-                <span key={t.x} className="absolute text-xs text-slate-600 border-l pl-1" style={{ left: t.x, height: 28, lineHeight: '28px' }}>{t.label}</span>
+            <div className="relative" style={{ width, height: 32 }}>
+              {monthTicks.map((t, i) => (
+                <span key={i} className="absolute text-[11px] text-slate-600 border-l border-slate-200 pl-1.5 font-medium" style={{ left: t.x, height: 32, lineHeight: '32px' }}>
+                  {t.year && <span className="text-brand-mid mr-1">{t.year}</span>}{t.label}
+                </span>
               ))}
             </div>
           </div>
@@ -117,11 +151,12 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
           {seed.sections.map(sec => (
             <div key={sec.name}>
               {/* 部位标题行 */}
-              <div className="flex bg-blue-50 border-b">
-                <div className="sticky left-0 z-10 bg-blue-50 border-r px-2 text-xs font-bold text-blue-800 flex items-center" style={{ width: LABEL_W, height: 26 }}>
+              <div className="flex bg-brand-mid/5 border-b border-slate-200">
+                <div className="sticky left-0 z-10 bg-brand-mid/5 border-r border-slate-200 px-3 text-xs font-bold text-brand-mid flex items-center" style={{ width: LABEL_W, height: 28 }}>
+                  <span className="w-1 h-3 rounded bg-brand-mid mr-2" />
                   {sec.name}
                 </div>
-                <div style={{ width, height: 26 }} />
+                <div style={{ width, height: 28 }} />
               </div>
               {sec.tasks.map(task => {
                 const { status, ps, pe, progress, dd } = rowFor(task);
@@ -132,20 +167,25 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
                 const planW = ps && pe ? Math.max(DAY_W, (diffDays(ps, pe) + 1) * DAY_W) : DAY_W;
                 return (
                   <div key={task.id}
-                    className={`flex border-b cursor-pointer group ${isSel ? 'bg-blue-100/70' : isAff ? 'bg-orange-50' : 'hover:bg-slate-50'}`}
+                    className={`flex border-b border-slate-100 cursor-pointer group transition-colors ${
+                      isSel ? 'bg-brand-bright/10' : isAff ? 'bg-orange-50' : 'hover:bg-slate-50'
+                    }`}
                     onClick={() => setSelected(isSel ? null : task.id)}
                     onDoubleClick={() => onEdit(task, sec.name)}
                   >
-                    <div className="sticky left-0 z-10 bg-inherit border-r px-2 flex items-center gap-1 text-xs" style={{ width: LABEL_W, height: ROW_H }}>
-                      {task.milestone && <i className="w-2.5 h-2.5 rotate-45 bg-amber-500 shrink-0" />}
+                    <div className="sticky left-0 z-10 bg-inherit border-r border-slate-200 px-3 flex items-center gap-1.5 text-xs" style={{ width: LABEL_W, height: ROW_H }}>
+                      {task.milestone && <i className="w-2.5 h-2.5 rotate-45 bg-brand-glow shrink-0" />}
                       <span className={`truncate ${isCrit ? 'font-semibold text-amber-800' : ''}`} title={task.name}>{task.name}</span>
-                      <button className="ml-auto opacity-0 group-hover:opacity-100 text-blue-600 shrink-0"
+                      <button className="ml-auto opacity-0 group-hover:opacity-100 text-brand-mid hover:text-brand-bright text-[11px] px-1.5 py-0.5 rounded bg-brand-bright/10 hover:bg-brand-bright/20 transition-all shrink-0"
                         onClick={e => { e.stopPropagation(); onEdit(task, sec.name); }}>填报</button>
                     </div>
                     <div className="relative" style={{ width, height: ROW_H }}>
                       {/* 今日线 */}
                       {todayX >= 0 && todayX <= width && (
-                        <i className="absolute top-0 bottom-0 w-px bg-red-400/60" style={{ left: todayX }} />
+                        <>
+                          <i className="absolute top-0 bottom-0 w-px bg-red-500/70" style={{ left: todayX }} />
+                          <i className="absolute w-2 h-2 rounded-full bg-red-500 ring-2 ring-white shadow" style={{ left: todayX - 4, top: -4 }} />
+                        </>
                       )}
                       {/* 周网格 */}
                       {[...Array(Math.floor(totalDays / 7))].map((_, i) => (
@@ -154,20 +194,22 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
                       {ps && pe && (
                         <>
                           {/* 计划条 */}
-                          <div className={`absolute rounded-sm ${isCrit ? 'bg-amber-200 border border-amber-400' : 'bg-slate-300/80'}`}
-                            style={{ left: planX, width: planW, top: 6, height: 10 }}
+                          <div className={`absolute rounded-sm ${isCrit ? 'bg-amber-200 border border-amber-400' : 'bg-gradient-to-r from-slate-300 to-slate-400/80'}`}
+                            style={{ left: planX, width: planW, top: 7, height: 10 }}
                             title={`计划 ${task.planStart} ~ ${task.planEnd}`} />
                           {/* 实际条 */}
                           {progress > 0 && (
                             <div className={`absolute rounded-sm ${
-                              status === 'delayed' || status === 'done-late' ? 'bg-red-500' : 'bg-green-500'}`}
-                              style={{ left: planX, width: Math.max(4, planW * progress / 100), top: 19, height: 10 }}
+                              status === 'delayed' || status === 'done-late'
+                                ? 'bg-gradient-to-r from-red-400 to-red-500'
+                                : 'bg-gradient-to-r from-emerald-400 to-emerald-500'}`}
+                              style={{ left: planX, width: Math.max(4, planW * progress / 100), top: 20, height: 10 }}
                               title={`实际进度 ${progress}%`} />
                           )}
                           {/* 延期拖尾 */}
                           {(status === 'delayed') && dd > 0 && todayX > planX + planW && (
-                            <div className="absolute bg-red-300/70 rounded-r-sm border-r-2 border-red-500"
-                              style={{ left: planX + planW, width: Math.min(todayX - planX - planW, width), top: 6, height: 10 }}
+                            <div className="absolute bg-red-300/70 rounded-r-sm border-r-2 border-red-500 border-dashed"
+                              style={{ left: planX + planW, width: Math.min(todayX - planX - planW, width), top: 7, height: 10 }}
                               title={`已超期 ${dd} 天`} />
                           )}
                           {isAff && (
@@ -176,12 +218,12 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
                         </>
                       )}
                       {task.milestone && ps && (
-                        <i className="absolute w-3 h-3 rotate-45 bg-amber-500 border border-white shadow"
-                          style={{ left: planX - 5, top: ROW_H / 2 - 6 }} />
+                        <i className="absolute w-3.5 h-3.5 rotate-45 bg-brand-glow border-2 border-white shadow-md"
+                          style={{ left: planX - 6, top: ROW_H / 2 - 7 }} />
                       )}
                       {/* 依赖小箭头提示 */}
                       {down.get(task.id)?.length ? (
-                        <span className="absolute text-[9px] text-slate-400" style={{ left: planX + planW + 2, top: 9 }}>→{down.get(task.id)!.length}</span>
+                        <span className="absolute text-[9px] text-slate-400 font-medium" style={{ left: planX + planW + 4, top: 10 }}>→{down.get(task.id)!.length}</span>
                       ) : null}
                     </div>
                   </div>
@@ -191,7 +233,10 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
           ))}
         </div>
       </div>
-      <p className="text-xs text-muted-foreground">提示：单击任务行高亮其延期的下游传导链；双击或点「填报」录入实际进度。橙色底纹行 = 选中任务延期将波及的任务。</p>
+      <div className="flex items-start gap-1.5 text-[11px] text-muted-foreground bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+        <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-brand-mid" />
+        <p>提示：单击任务行高亮其延期的下游传导链；双击或点「填报」录入实际进度。橙色底纹行 = 选中任务延期将波及的任务。</p>
+      </div>
     </div>
   );
 }

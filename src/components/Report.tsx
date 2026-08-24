@@ -5,7 +5,7 @@ import { allTasks, taskStatus, overallProgress, buildAlerts, today, toDate, addD
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ClipboardCopy, Download, RotateCcw } from 'lucide-react';
+import { ClipboardCopy, Download, RotateCcw, FileText, Calendar } from 'lucide-react';
 
 export default function Report() {
   const { state } = useStore();
@@ -21,21 +21,17 @@ export default function Report() {
     const ov = overallProgress(seed, state.actuals, now);
     const alerts = buildAlerts(seed, state.actuals, state.closedAlerts, now).filter(a => !a.closed);
 
-    // 本周完成（实际完成日在7天内，或本周日志中进度达100）
     const doneThisWeek = tasks.filter(({ task }) => {
       const ae = toDate(state.actuals[task.id]?.actualEnd);
       return ae && ae >= weekAgo && ae <= now;
     });
-    // 本周有进展的
     const activeThisWeek = tasks.filter(({ task }) => {
       const act = state.actuals[task.id];
       if (!act || act.actualEnd) return false;
       const us = act.updatedAt ? new Date(act.updatedAt) : null;
       return (act.progress > 0 || act.actualStart) && us && us >= weekAgo;
     });
-    // 延期中
     const delayed = tasks.filter(({ task }) => taskStatus(task, state.actuals[task.id], now) === 'delayed');
-    // 下周计划（计划开始日在未来7天内 或 跨越下周）
     const nextPlan = tasks.filter(({ task }) => {
       const ps = toDate(task.planStart), pe = toDate(task.planEnd);
       if (!ps || !pe) return false;
@@ -79,7 +75,6 @@ export default function Report() {
     return L.join('\n');
   }, [state.actuals, state.closedAlerts]);
 
-  // 自动生成的报告更新时，若用户未手动编辑则同步到编辑区
   useEffect(() => {
     if (!isEdited) {
       setEditedReport(report);
@@ -105,29 +100,39 @@ export default function Report() {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">周进度报告（自动生成，可编辑）</CardTitle>
+    <Card className="border-slate-200 shadow-sm animate-fade-up">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100">
+        <CardTitle className="text-base flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-brand-gradient flex items-center justify-center">
+            <FileText className="w-4 h-4 text-white" />
+          </div>
+          周进度报告
+          <span className="text-[11px] font-normal text-muted-foreground">（自动生成，可编辑）</span>
+        </CardTitle>
         <div className="flex gap-2">
           {isEdited && (
-            <Button size="sm" variant="ghost" onClick={() => { setEditedReport(report); setIsEdited(false); }}>
+            <Button size="sm" variant="ghost" className="hover:text-brand-mid" onClick={() => { setEditedReport(report); setIsEdited(false); }}>
               <RotateCcw className="w-4 h-4 mr-1" />恢复自动生成
             </Button>
           )}
-          <Button size="sm" variant="outline" onClick={copy}>
+          <Button size="sm" variant="outline" className="hover:border-brand-mid hover:text-brand-mid" onClick={copy}>
             <ClipboardCopy className="w-4 h-4 mr-1" />{copied ? '已复制' : '复制'}
           </Button>
-          <Button size="sm" variant="outline" onClick={download}>
+          <Button size="sm" className="bg-brand-gradient shadow-md shadow-brand-mid/30" onClick={download}>
             <Download className="w-4 h-4 mr-1" />下载
           </Button>
         </div>
       </CardHeader>
       <CardContent>
+        <div className="flex items-center gap-2 text-[11px] text-muted-foreground mb-2.5 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5">
+          <Calendar className="w-3.5 h-3.5 text-brand-mid" />
+          报告日期 <b className="text-foreground tabular-nums">{now.toLocaleDateString('zh-CN')}</b> · 数据周期：本周（{weekAgo.toLocaleDateString('zh-CN')} ~ {now.toLocaleDateString('zh-CN')}）
+        </div>
         <Textarea
           value={editedReport}
           onChange={e => { setEditedReport(e.target.value); setIsEdited(true); }}
           rows={28}
-          className="font-mono text-sm whitespace-pre"
+          className="font-mono text-sm whitespace-pre bg-slate-50/50 leading-relaxed resize-none focus-visible:bg-white border-slate-200"
         />
       </CardContent>
     </Card>

@@ -8,14 +8,22 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PenLine } from 'lucide-react';
+import { PenLine, Search, Filter, Layers } from 'lucide-react';
 
 const statusColor: Record<TaskStatus, string> = {
   'not-started': 'bg-slate-100 text-slate-600',
-  'on-track': 'bg-blue-100 text-blue-700',
+  'on-track': 'bg-sky-100 text-sky-700',
   'delayed': 'bg-red-100 text-red-700',
-  'done': 'bg-green-100 text-green-700',
+  'done': 'bg-emerald-100 text-emerald-700',
   'done-late': 'bg-amber-100 text-amber-700',
+};
+
+const statusDot: Record<TaskStatus, string> = {
+  'not-started': 'bg-slate-400',
+  'on-track': 'bg-sky-500',
+  'delayed': 'bg-red-500',
+  'done': 'bg-emerald-500',
+  'done-late': 'bg-amber-500',
 };
 
 export default function TaskList({ onEdit }: { onEdit: (task: Task, section: string) => void }) {
@@ -37,16 +45,20 @@ export default function TaskList({ onEdit }: { onEdit: (task: Task, section: str
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap gap-2">
+      {/* 筛选条 */}
+      <div className="flex flex-wrap gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2.5 shadow-sm">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mr-1">
+          <Filter className="w-3.5 h-3.5" />筛选
+        </div>
         <Select value={secFilter} onValueChange={setSecFilter}>
-          <SelectTrigger className="w-52"><SelectValue placeholder="全部部位" /></SelectTrigger>
+          <SelectTrigger className="w-52 h-9 bg-slate-50/80"><Layers className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" /><SelectValue placeholder="全部部位" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">全部施工部位</SelectItem>
             {seed.sections.map(s => <SelectItem key={s.name} value={s.name}>{s.name}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={stFilter} onValueChange={setStFilter}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="全部状态" /></SelectTrigger>
+          <SelectTrigger className="w-36 h-9 bg-slate-50/80"><SelectValue placeholder="全部状态" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">全部状态</SelectItem>
             <SelectItem value="not-started">未开始</SelectItem>
@@ -56,14 +68,17 @@ export default function TaskList({ onEdit }: { onEdit: (task: Task, section: str
             <SelectItem value="done-late">延期完成</SelectItem>
           </SelectContent>
         </Select>
-        <Input className="w-48" placeholder="搜索任务名称…" value={kw} onChange={e => setKw(e.target.value)} />
-        <span className="text-xs text-muted-foreground self-center ml-auto">共 {rows.length} 项</span>
+        <div className="relative flex-1 min-w-[180px] max-w-[280px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <Input className="h-9 pl-9 bg-slate-50/80" placeholder="搜索任务名称…" value={kw} onChange={e => setKw(e.target.value)} />
+        </div>
+        <span className="text-xs text-muted-foreground self-center ml-auto px-2 py-1 rounded-md bg-slate-50">共 <b className="text-brand-mid tabular-nums">{rows.length}</b> 项</span>
       </div>
 
-      <div className="border rounded-lg overflow-auto max-h-[62vh]">
+      <div className="border border-slate-200 rounded-xl overflow-auto max-h-[62vh] bg-white shadow-sm scrollbar-slim">
         <Table>
-          <TableHeader className="sticky top-0 bg-slate-50 z-10">
-            <TableRow>
+          <TableHeader className="sticky top-0 bg-gradient-to-r from-slate-50 to-slate-100 z-10 border-b border-slate-200">
+            <TableRow className="hover:bg-transparent">
               <TableHead className="w-24">状态</TableHead>
               <TableHead>施工任务</TableHead>
               <TableHead className="hidden md:table-cell">所属部位</TableHead>
@@ -82,43 +97,51 @@ export default function TaskList({ onEdit }: { onEdit: (task: Task, section: str
               const dd = delayDays(task, act, now);
               const progress = act?.actualEnd ? 100 : (act?.progress ?? 0);
               return (
-                <TableRow key={task.id} className={st === 'delayed' ? 'bg-red-50/60' : ''}>
+                <TableRow key={task.id} className={`group transition-colors ${st === 'delayed' ? 'bg-red-50/40 hover:bg-red-50/70' : 'hover:bg-slate-50'}`}>
                   <TableCell>
-                    <Badge className={`${statusColor[st]} border-0 text-xs whitespace-nowrap`}>{STATUS_LABEL[st]}</Badge>
-                    {dd > 0 && st !== 'done' && <div className="text-xs text-red-600 mt-0.5">超{dd}天</div>}
+                    <Badge className={`${statusColor[st]} border-0 text-xs whitespace-nowrap h-5`}>
+                      <span className={`inline-block w-1.5 h-1.5 rounded-full ${statusDot[st]} mr-1`} />
+                      {STATUS_LABEL[st]}
+                    </Badge>
+                    {dd > 0 && st !== 'done' && <div className="text-[10px] text-red-600 mt-0.5 font-medium">超{dd}天</div>}
                   </TableCell>
                   <TableCell className="font-medium">
-                    <span className="flex items-center gap-1">
-                      {task.milestone && <i className="w-2 h-2 rotate-45 bg-amber-500 shrink-0" />}
+                    <span className="flex items-center gap-1.5">
+                      {task.milestone && <i className="w-2 h-2 rotate-45 bg-brand-glow shrink-0" />}
                       {task.name}
                     </span>
-                    {task.remark && <div className="text-xs text-muted-foreground font-normal mt-0.5">{task.remark}</div>}
+                    {task.remark && <div className="text-[11px] text-muted-foreground font-normal mt-0.5">{task.remark}</div>}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-xs text-muted-foreground max-w-40 truncate">{section}</TableCell>
-                  <TableCell className="text-xs whitespace-nowrap">{fmtCN(toDate(task.planStart))}</TableCell>
-                  <TableCell className="text-xs whitespace-nowrap">{fmtCN(toDate(task.planEnd))}</TableCell>
-                  <TableCell className="text-xs">{task.duration ?? '—'}天</TableCell>
+                  <TableCell className="hidden md:table-cell text-xs text-muted-foreground max-w-40 truncate" title={section}>{section}</TableCell>
+                  <TableCell className="text-xs whitespace-nowrap tabular-nums">{fmtCN(toDate(task.planStart))}</TableCell>
+                  <TableCell className="text-xs whitespace-nowrap tabular-nums">{fmtCN(toDate(task.planEnd))}</TableCell>
+                  <TableCell className="text-xs tabular-nums">{task.duration ?? '—'}天</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
-                      <div className="h-1.5 flex-1 bg-slate-200 rounded overflow-hidden min-w-10">
-                        <div className={`h-full ${st === 'delayed' || st === 'done-late' ? 'bg-red-500' : 'bg-green-500'}`}
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-1.5 flex-1 bg-slate-200 rounded-full overflow-hidden min-w-10">
+                        <div className={`h-full rounded-full transition-all duration-500 ${
+                          st === 'delayed' || st === 'done-late' ? 'bg-gradient-to-r from-red-400 to-red-500'
+                          : 'bg-gradient-to-r from-emerald-400 to-emerald-500'}`}
                           style={{ width: `${progress}%` }} />
                       </div>
-                      <span className="text-xs w-8">{progress}%</span>
+                      <span className="text-xs w-9 tabular-nums font-medium">{progress}%</span>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-xs">{act?.actualEnd ?? '—'}</TableCell>
+                  <TableCell className="hidden lg:table-cell text-xs tabular-nums">{act?.actualEnd ?? '—'}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button size="sm" variant="outline" onClick={() => onEdit(task, section)}>
+                    <div className="flex items-center gap-1.5">
+                      <Button size="sm" variant="outline" className="h-7 px-2 text-xs hover:border-brand-mid hover:text-brand-mid hover:bg-brand-bright/5 transition-colors" onClick={() => onEdit(task, section)}>
                         <PenLine className="w-3 h-3 mr-1" />{role ? '填报' : '查看'}
                       </Button>
-                      {pendingTaskIds.has(task.id) && <Badge className="bg-blue-600 text-xs">待审</Badge>}
+                      {pendingTaskIds.has(task.id) && <Badge className="bg-brand-bright text-white text-[10px] h-4 px-1.5">待审</Badge>}
                     </div>
                   </TableCell>
                 </TableRow>
               );
             })}
+            {rows.length === 0 && (
+              <TableRow><TableCell colSpan={9} className="text-center py-10 text-muted-foreground">无符合条件的任务</TableCell></TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
