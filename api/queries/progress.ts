@@ -7,7 +7,7 @@ import {
   users,
   type ProjectMember,
 } from "@db/schema";
-import { eq, desc, asc, inArray } from "drizzle-orm";
+import { eq, desc, asc, inArray, ne, and } from "drizzle-orm";
 
 export type ProjectRole = ProjectMember["projectRole"];
 
@@ -138,15 +138,36 @@ export async function createReport(data: {
   return id;
 }
 
-/** 检查指定 taskId 是否已有待审核填报 */
-export async function hasPendingReport(taskId: string): Promise<boolean> {
+/** 检查指定 taskId 是否已有待审核填报（仅 status='pending' 才算，已审核通过/驳回的不拦截二次填报）
+ *  excludeReporterId 传值时：允许该填报人覆盖自己之前的同任务 pending（用于二次更新），
+ *  但仍会拦截其他施工单位同事的 pending（避免多人同时填同一任务）。
+ */
+export async function hasPendingReport(taskId: string, excludeReporterId?: number): Promise<boolean> {
   const db = getDb();
-  const row = await db
-    .select({ id: progressReports.id })
-    .from(progressReports)
-    .where(eq(progressReports.taskId, taskId))
-    .limit(1);
+  const base = and(eq(progressReports.taskId, taskId), eq(progressReports.status, "pending"));
+  const where = excludeReporterId != null ? and(base, ne(progressReports.reporterId, excludeReporterId)) : base;
+  const row = await db.select({ id: progressReports.id }).from(progressReports).where(where).limit(1);
   return row.length > 0;
+}
+
+/** 将同一填报人该任务上此前未审核的 pending 置为「已过期-被新填报覆盖」，避免审核列表出现同一人的多条待审记录 */
+export async function expirePendingBefore(taskId: string, reporterId: number) {
+  const db = getDb();
+  await db
+    .update(progressReports)
+    .set({
+      status: "rejected",
+      reviewerId: reporterId,
+      reviewNote: "被新填报覆盖（同一填报人同一任务更新）",
+      reviewedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(progressReports.taskId, taskId),
+        eq(progressReports.reporterId, reporterId),
+        eq(progressReports.status, "pending"),
+      ),
+    );
 }
 
 export async function reviewReport(

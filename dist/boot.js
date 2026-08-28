@@ -48043,10 +48043,27 @@ async function createReport(data) {
   }).$returningId();
   return id;
 }
-async function hasPendingReport(taskId) {
+async function hasPendingReport(taskId, excludeReporterId) {
   const db = getDb();
-  const row = await db.select({ id: progressReports.id }).from(progressReports).where(eq(progressReports.taskId, taskId)).limit(1);
+  const base = and(eq(progressReports.taskId, taskId), eq(progressReports.status, "pending"));
+  const where = excludeReporterId != null ? and(base, ne(progressReports.reporterId, excludeReporterId)) : base;
+  const row = await db.select({ id: progressReports.id }).from(progressReports).where(where).limit(1);
   return row.length > 0;
+}
+async function expirePendingBefore(taskId, reporterId) {
+  const db = getDb();
+  await db.update(progressReports).set({
+    status: "rejected",
+    reviewerId: reporterId,
+    reviewNote: "\u88AB\u65B0\u586B\u62A5\u8986\u76D6\uFF08\u540C\u4E00\u586B\u62A5\u4EBA\u540C\u4E00\u4EFB\u52A1\u66F4\u65B0\uFF09",
+    reviewedAt: /* @__PURE__ */ new Date()
+  }).where(
+    and(
+      eq(progressReports.taskId, taskId),
+      eq(progressReports.reporterId, reporterId),
+      eq(progressReports.status, "pending")
+    )
+  );
 }
 async function reviewReport(reportId, reviewerId, approve, reviewNote) {
   const db = getDb();
@@ -48137,13 +48154,14 @@ var progressRouter = createRouter({
     const role = await requireRole2(ctx, ["owner", "supervisor", "contractor"]);
     const autoApprove = role === "owner" || role === "supervisor";
     if (!autoApprove) {
-      const hasPending = await hasPendingReport(input.taskId);
+      const hasPending = await hasPendingReport(input.taskId, ctx.user.id);
       if (hasPending) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "\u8BE5\u4EFB\u52A1\u5DF2\u6709\u5F85\u5BA1\u6838\u7684\u586B\u62A5\uFF0C\u8BF7\u7B49\u5F85\u5BA1\u6838\u5B8C\u6210\u540E\u518D\u63D0\u4EA4"
+          message: "\u8BE5\u4EFB\u52A1\u5DF2\u6709\u5176\u4ED6\u540C\u4E8B\u7684\u5F85\u5BA1\u6838\u586B\u62A5\uFF0C\u8BF7\u7B49\u5F85\u5BA1\u6838\u5B8C\u6210\u540E\u518D\u63D0\u4EA4"
         });
       }
+      await expirePendingBefore(input.taskId, ctx.user.id);
     }
     const id = await createReport({
       ...input,

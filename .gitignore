@@ -2,7 +2,7 @@
 node_modules/
 
 # 构建产物
-# dist/        # 已注释:采用「GitHub + 服务器免 build」部署方案,dist/ 需入库(git pull 后直接重启)
+dist/
 
 # 环境变量（含密钥，禁止上传）
 .env

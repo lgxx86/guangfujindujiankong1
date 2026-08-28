@@ -10,6 +10,7 @@ import {
   pendingReports,
   reviewReport,
   hasPendingReport,
+  expirePendingBefore,
   reportLogs,
   myReports,
   listClosures,
@@ -91,15 +92,21 @@ export const progressRouter = createRouter({
     .mutation(async ({ ctx, input }) => {
       const role = await requireRole(ctx, ["owner", "supervisor", "contractor"]);
       const autoApprove = role === "owner" || role === "supervisor";
-      // 施工方提交时，若该任务已有待审核填报则拒绝，避免重复提交导致进度混乱
+      // 施工方提交时：
+      // 1) 允许同一填报人覆盖自己之前「未审核的 pending」（例如 50% 未审核就更新到 60% 的场景）
+      //    → 用 hasPendingReport(..., excludeReporterId = 当前用户)只排除自己的旧 pending
+      // 2) 但如果有别的施工单位同事的 pending 仍在审核 → 拒绝，避免同一任务多人同时填报混乱
+      // 3) 之前已审核通过/驳回的记录（approved/rejected）一律放行 → 支持无限次二次填报
       if (!autoApprove) {
-        const hasPending = await hasPendingReport(input.taskId);
+        const hasPending = await hasPendingReport(input.taskId, ctx.user.id);
         if (hasPending) {
           throw new TRPCError({
             code: "CONFLICT",
-            message: "该任务已有待审核的填报，请等待审核完成后再提交",
+            message: "该任务已有其他同事的待审核填报，请等待审核完成后再提交",
           });
         }
+        // 同一填报人之前有未审核 pending → 标记为「被新填报覆盖(rejected)」，保证审核列表始终只有最新一条
+        await expirePendingBefore(input.taskId, ctx.user.id);
       }
       const id = await createReport({
         ...input,
