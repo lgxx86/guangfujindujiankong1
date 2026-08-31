@@ -4,10 +4,11 @@ import { projectSeed, type ProjectSeedRow } from "@db/schema";
 import { eq, desc } from "drizzle-orm";
 import type { ProjectSeed } from "@/types";
 // 注意：后端运行时 dist/ 没有 src/seed.json，打包时必须把默认种子内联或用 fs 读构建产物内的文件
-// 这里用 createRequire 直接读 src/seed.json（esbuild --bundle 会在 banner 注入 createRequire）
-import { createRequire } from "module";
-import { fileURLToPath } from "url";
-const __require = createRequire(fileURLToPath(import.meta.url));
+// 修复 v2.5.1：为避免和 npm run build 的 esbuild --banner 中 `import { createRequire } from 'module'`
+//              发生 ESM 重复声明 SyntaxError，这里不再顶层声明 createRequire，
+//              而是复用 banner 注入的顶层 require 常量（banner 已把 createRequire(import.meta.url) 赋给 require）
+declare const require: (id: string) => any;
+const __require = require;
 let _defaultSeed: ProjectSeed | null = null;
 
 function loadDefaultSeed(): ProjectSeed {

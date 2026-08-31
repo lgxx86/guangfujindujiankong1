@@ -81466,9 +81466,7 @@ var memberRouter = createRouter({
 });
 
 // api/queries/seed.ts
-import { createRequire } from "module";
-import { fileURLToPath } from "url";
-var __require2 = createRequire(fileURLToPath(import.meta.url));
+var __require2 = __require;
 var _defaultSeed = null;
 function loadDefaultSeed() {
   if (_defaultSeed) return _defaultSeed;
