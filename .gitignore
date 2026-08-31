@@ -1,8 +1,8 @@
 # 依赖
 node_modules/
 
-# 构建产物
-dist/
+# 构建产物说明：dist/ 必须纳入 Git，服务器部署时直接复用不再 npm run build
+# dist/  ← 此行已删除
 
 # 环境变量（含密钥，禁止上传）
 .env
@@ -10,6 +10,7 @@ dist/
 # 系统文件
 .DS_Store
 Thumbs.db
+__MACOSX/
 
 # IDE
 .trae-html-share-packages/
@@ -22,6 +23,10 @@ npm-debug.log*
 # 数据库迁移产物（由 drizzle-kit generate 生成，按需保留）
 # db/migrations/
 
-# 临时文件
+# 临时文件 / 部署打包（本地生成，不要上传）
 *.tmp
 *.bak
+*.tar
+*.tar.gz
+dmk-progress-v*.tgz
+dmk-progress-v*.zip

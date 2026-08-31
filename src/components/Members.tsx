@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { trpc } from '@/providers/trpc';
 import { useStore, ROLE_LABEL } from '@/lib/store';
+import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,11 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Users, UserPlus, KeyRound } from 'lucide-react';
+import { Users, UserPlus, KeyRound, FileSpreadsheet } from 'lucide-react';
 import { toast } from 'sonner';
+import SeedImportDialog from '@/components/SeedImportDialog';
 
 export default function Members() {
   const { role } = useStore();
+  const { user } = useAuth();
   const utils = trpc.useUtils();
   const listQ = trpc.member.list.useQuery(undefined, { enabled: role === 'owner', retry: false });
   const setM = trpc.member.setRole.useMutation({
@@ -22,6 +25,9 @@ export default function Members() {
       utils.member.myRole.invalidate();
     },
   });
+
+  // 导入工作计划表对话框
+  const [importOpen, setImportOpen] = useState(false);
 
   // 创建账号
   const [createOpen, setCreateOpen] = useState(false);
@@ -60,9 +66,17 @@ export default function Members() {
         <Users className="w-5 h-5 text-blue-600" />
         <h3 className="font-bold">项目成员（{list.length}）</h3>
         <span className="text-xs text-muted-foreground">在此创建登录账号并分配项目角色</span>
-        <Button size="sm" className="ml-auto" onClick={() => setCreateOpen(true)}>
-          <UserPlus className="w-4 h-4 mr-1" />创建账号
-        </Button>
+        <div className="ml-auto flex items-center gap-2">
+          {user?.role === 'admin' && (
+            <Button size="sm" variant="outline" className="gap-1.5 bg-gradient-to-r from-cyan-50/50 to-amber-50/50 border border-brand-glow/20 text-slate-800 hover:bg-white" onClick={() => setImportOpen(true)}>
+              <FileSpreadsheet className="w-4 h-4 text-brand-glow" />
+              导入工作计划表
+            </Button>
+          )}
+          <Button size="sm" className="gap-1" onClick={() => setCreateOpen(true)}>
+            <UserPlus className="w-4 h-4" />创建账号
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -172,6 +186,9 @@ export default function Members() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* 导入工作计划表向导（Admin 专属） */}
+      <SeedImportDialog open={importOpen} onOpenChange={setImportOpen} />
     </div>
   );
 }

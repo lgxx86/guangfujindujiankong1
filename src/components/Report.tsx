@@ -1,6 +1,6 @@
 // 周进度报告自动生成
 import { useEffect, useMemo, useState } from 'react';
-import { useStore, seed } from '@/lib/store';
+import { useStore } from '@/lib/store';
 import { allTasks, taskStatus, overallProgress, buildAlerts, today, toDate, addDays, fmtCN, diffDays } from '@/lib/analysis';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ClipboardCopy, Download, RotateCcw } from 'lucide-react';
 
 export default function Report() {
-  const { state } = useStore();
+  const { seed, state } = useStore();
   const now = today();
   const weekAgo = addDays(now, -7);
   const nextWeek = addDays(now, 7);
@@ -77,7 +77,7 @@ export default function Report() {
       L.push(`· ${task.name}（${section.split('、')[0]}）：${fmtCN(toDate(task.planStart))}~${fmtCN(toDate(task.planEnd))}`);
     });
     return L.join('\n');
-  }, [state.actuals, state.closedAlerts]);
+  }, [seed, state.actuals, state.closedAlerts]);
 
   // 自动生成的报告更新时，若用户未手动编辑则同步到编辑区
   useEffect(() => {

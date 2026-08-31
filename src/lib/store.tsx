@@ -5,7 +5,9 @@ import seedJson from '@/seed.json';
 import { trpc } from '@/providers/trpc';
 import { useAuth } from '@/hooks/useAuth';
 
-export const seed = seedJson as ProjectSeed;
+/** 全局 seed：DB 动态优先（admin 导入后实时生效），fallback 到打包时内联的 seed.json */
+const FALLBACK_SEED = seedJson as ProjectSeed;
+export { FALLBACK_SEED };
 
 export type ProjectRole = 'owner' | 'supervisor' | 'contractor' | null;
 
@@ -16,6 +18,7 @@ export const ROLE_LABEL: Record<string, string> = {
 };
 
 interface Store {
+  seed: ProjectSeed;
   state: ProjectState;
   role: ProjectRole;
   userName: string;
@@ -33,6 +36,14 @@ const Ctx = createContext<Store | null>(null);
 export function StoreProvider({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const utils = trpc.useUtils();
+
+  // 动态工作计划（admin 导入后立即生效）：登录后才查询，未登录用默认 fallback
+  const seedQ = trpc.seed.get.useQuery(undefined, {
+    enabled: !!user,
+    retry: false,
+    staleTime: 1000 * 30, // 30 秒内不重复请求
+  });
+  const seed: ProjectSeed = seedQ.data?.seed ?? FALLBACK_SEED;
 
   const statesQ = trpc.progress.states.useQuery(undefined, { enabled: !!user });
   const logsQ = trpc.progress.logs.useQuery(undefined, { enabled: !!user });
@@ -97,11 +108,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
 
     return {
+      seed,
       state: { actuals, logs, closedAlerts: closuresQ.data ?? [] },
       role,
       userName: user?.name ?? '',
       logout,
-      loading: statesQ.isLoading || roleQ.isLoading,
+      loading: seedQ.isLoading || statesQ.isLoading || roleQ.isLoading || seedQ.isFetching,
       pendingTaskIds,
       updateTask(taskId, patch, _logNote) {
         const cur = actuals[taskId];
@@ -117,7 +129,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       closeAlert(key) { closeM.mutate({ alertKey: key }); },
       reopenAlert(key) { reopenM.mutate({ alertKey: key }); },
     };
-  }, [statesQ.data, logsQ.data, closuresQ.data, pendingQ.data, mineQ.data, role, user]);
+  }, [
+    seed,
+    statesQ.data,
+    logsQ.data,
+    closuresQ.data,
+    pendingQ.data,
+    mineQ.data,
+    role,
+    user,
+    seedQ.isLoading,
+    seedQ.isFetching,
+  ]);
 
   return <Ctx.Provider value={store}>{children}</Ctx.Provider>;
 }

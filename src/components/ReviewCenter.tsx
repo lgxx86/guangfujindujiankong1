@@ -1,7 +1,7 @@
 // 审核中心：监理/业主审核施工方填报
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { trpc } from '@/providers/trpc';
-import { seed, ROLE_LABEL, useStore } from '@/lib/store';
+import { ROLE_LABEL, useStore } from '@/lib/store';
 import { allTasks } from '@/lib/analysis';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,11 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle2, XCircle, ClipboardCheck, User } from 'lucide-react';
 
-const taskMap = new Map(allTasks(seed).map(x => [x.task.id, x]));
-
 export default function ReviewCenter() {
   const utils = trpc.useUtils();
-  const { role } = useStore();
+  const { seed, role } = useStore();
   const pendingQ = trpc.progress.pending.useQuery();
   const reviewM = trpc.progress.review.useMutation({
     onSuccess: () => {
@@ -25,6 +23,8 @@ export default function ReviewCenter() {
     },
   });
   const [notes, setNotes] = useState<Record<number, string>>({});
+
+  const taskMap = useMemo(() => new Map(allTasks(seed).map(x => [x.task.id, x])), [seed]);
 
   if (role !== 'owner' && role !== 'supervisor') {
     return <Card><CardContent className="py-10 text-center text-muted-foreground">审核中心仅对业主方、监理方开放</CardContent></Card>;

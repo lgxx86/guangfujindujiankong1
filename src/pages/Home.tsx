@@ -1,7 +1,7 @@
 // 主页面：登录门禁 + 角色化标签导航 + 预警弹窗
 import { useEffect, useMemo, useState } from 'react';
 import type { Task } from '@/types';
-import { useStore, seed, ROLE_LABEL } from '@/lib/store';
+import { useStore, ROLE_LABEL } from '@/lib/store';
 import { buildAlerts, today } from '@/lib/analysis';
 import { useAuth } from '@/hooks/useAuth';
 import { trpc } from '@/providers/trpc';
@@ -88,7 +88,7 @@ export default function Home() {
     redirectOnUnauthenticated: true,
     redirectPath: LOGIN_PATH,
   });
-  const { state, role, userName, logout, loading } = useStore();
+  const { seed, state, role, userName, logout, loading } = useStore();
   const [tab, setTab] = useState(() => {
     const h = location.hash.replace('#', '');
     return ['dashboard', 'gantt', 'tasks', 'alerts', 'report', 'review', 'logs', 'members'].includes(h) ? h : 'dashboard';
@@ -114,7 +114,7 @@ export default function Home() {
   });
   const pendingCount = pendingCountQ.data ?? 0;
 
-  const alerts = useMemo(() => buildAlerts(seed, state.actuals, state.closedAlerts, today()), [state.actuals, state.closedAlerts]);
+  const alerts = useMemo(() => buildAlerts(seed, state.actuals, state.closedAlerts, today()), [seed, state.actuals, state.closedAlerts]);
   const openAlerts = alerts.filter(a => !a.closed);
   const redAlerts = openAlerts.filter(a => a.level === 'red');
 

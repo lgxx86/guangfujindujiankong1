@@ -1,11 +1,10 @@
 // 填报记录：全部填报及审核状态留痕
 import { trpc } from '@/providers/trpc';
-import { seed, useStore } from '@/lib/store';
+import { useStore } from '@/lib/store';
 import { allTasks } from '@/lib/analysis';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-
-const taskMap = new Map(allTasks(seed).map(x => [x.task.id, x]));
+import { useMemo } from 'react';
 
 const STATUS: Record<string, { label: string; cls: string }> = {
   pending: { label: '待审核', cls: 'bg-blue-100 text-blue-700' },
@@ -14,9 +13,11 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 };
 
 export default function LogsTab() {
-  const { role } = useStore();
+  const { seed, role } = useStore();
   const logsQ = trpc.progress.logs.useQuery();
   const mineQ = trpc.progress.mine.useQuery(undefined, { enabled: role === 'contractor' });
+
+  const taskMap = useMemo(() => new Map(allTasks(seed).map(x => [x.task.id, x])), [seed]);
 
   const rows = role === 'contractor' ? (mineQ.data ?? []) : (logsQ.data ?? []);
 

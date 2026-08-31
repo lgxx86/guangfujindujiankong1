@@ -1,7 +1,7 @@
 // 任务清单：筛选 + 填报入口
 import { useMemo, useState } from 'react';
 import type { Task, TaskStatus } from '@/types';
-import { useStore, seed } from '@/lib/store';
+import { useStore } from '@/lib/store';
 import { allTasks, taskStatus, STATUS_LABEL, today, toDate, fmtCN, delayDays } from '@/lib/analysis';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -19,7 +19,7 @@ const statusColor: Record<TaskStatus, string> = {
 };
 
 export default function TaskList({ onEdit }: { onEdit: (task: Task, section: string) => void }) {
-  const { state, role, pendingTaskIds } = useStore();
+  const { seed, state, role, pendingTaskIds } = useStore();
   const [secFilter, setSecFilter] = useState('all');
   const [stFilter, setStFilter] = useState('all');
   const [kw, setKw] = useState('');
@@ -33,7 +33,7 @@ export default function TaskList({ onEdit }: { onEdit: (task: Task, section: str
       if (kw && !task.name.includes(kw)) return false;
       return true;
     });
-  }, [secFilter, stFilter, kw, state.actuals]);
+  }, [seed, secFilter, stFilter, kw, state.actuals]);
 
   return (
     <div className="space-y-3">

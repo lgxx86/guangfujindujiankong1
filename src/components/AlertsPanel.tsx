@@ -1,6 +1,6 @@
 // 预警管理：预警台账、闭环处理、导出微信通报
 import { useMemo, useState } from 'react';
-import { useStore, seed } from '@/lib/store';
+import { useStore } from '@/lib/store';
 import { buildAlerts, today } from '@/lib/analysis';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,12 +8,12 @@ import { Button } from '@/components/ui/button';
 import { AlertTriangle, BellRing, CheckCheck, Share2, RotateCcw } from 'lucide-react';
 
 export default function AlertsPanel() {
-  const { state, closeAlert, reopenAlert, role } = useStore();
+  const { seed, state, closeAlert, reopenAlert, role } = useStore();
   const canClose = role === 'owner' || role === 'supervisor';
   const [copied, setCopied] = useState(false);
   const now = today();
 
-  const alerts = useMemo(() => buildAlerts(seed, state.actuals, state.closedAlerts, now), [state.actuals, state.closedAlerts]);
+  const alerts = useMemo(() => buildAlerts(seed, state.actuals, state.closedAlerts, now), [seed, state.actuals, state.closedAlerts]);
   const open = alerts.filter(a => !a.closed);
   const closed = alerts.filter(a => a.closed);
 

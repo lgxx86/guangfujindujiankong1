@@ -1,7 +1,7 @@
 // 甘特图：计划 vs 实际对比、今日线、里程碑、关键线路、延期传导高亮
 import { useMemo, useState } from 'react';
 import type { Task } from '@/types';
-import { useStore, seed } from '@/lib/store';
+import { useStore } from '@/lib/store';
 import { allTasks, taskStatus, propagation, downstreamMap, today, toDate, diffDays, delayDays } from '@/lib/analysis';
 import { Info } from 'lucide-react';
 
@@ -9,43 +9,46 @@ const DAY_W = 15;      // 每天像素
 const ROW_H = 36;      // 行高
 const LABEL_W = 230;   // 左侧名称列宽
 
-// 从项目数据动态计算甘特图日期范围（左右各留 15 天余量）
-const _projectDates = allTasks(seed)
-  .flatMap(({ task }) => [toDate(task.planStart), toDate(task.planEnd)])
-  .filter((d): d is Date => d !== null);
-const RANGE_START = (() => {
-  if (!_projectDates.length) return new Date(new Date().getFullYear(), 0, 1);
-  const d = new Date(Math.min(..._projectDates.map(x => x.getTime())));
-  d.setDate(d.getDate() - 15);
-  return d;
-})();
-const RANGE_END = (() => {
-  if (!_projectDates.length) return new Date(new Date().getFullYear(), 11, 31);
-  const d = new Date(Math.max(..._projectDates.map(x => x.getTime())));
-  d.setDate(d.getDate() + 15);
-  return d;
-})();
-
-function xOf(d: Date): number {
-  return diffDays(RANGE_START, d) * DAY_W;
-}
-
 const MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 
+function xOf(start: Date, d: Date): number {
+  return diffDays(start, d) * DAY_W;
+}
+
 export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string) => void }) {
-  const { state } = useStore();
+  const { seed, state } = useStore();
   const [selected, setSelected] = useState<string | null>(null);
   const [showCritical, setShowCritical] = useState(true);
   const now = today();
 
+  // 从项目数据动态计算甘特图日期范围（左右各留 15 天余量）
+  const { RANGE_START, RANGE_END } = useMemo(() => {
+    const projectDates = allTasks(seed)
+      .flatMap(({ task }) => [toDate(task.planStart), toDate(task.planEnd)])
+      .filter((d): d is Date => d !== null);
+    const start = (() => {
+      if (!projectDates.length) return new Date(new Date().getFullYear(), 0, 1);
+      const d = new Date(Math.min(...projectDates.map(x => x.getTime())));
+      d.setDate(d.getDate() - 15);
+      return d;
+    })();
+    const end = (() => {
+      if (!projectDates.length) return new Date(new Date().getFullYear(), 11, 31);
+      const d = new Date(Math.max(...projectDates.map(x => x.getTime())));
+      d.setDate(d.getDate() + 15);
+      return d;
+    })();
+    return { RANGE_START: start, RANGE_END: end };
+  }, [seed]);
+
   const totalDays = diffDays(RANGE_START, RANGE_END) + 1;
   const width = totalDays * DAY_W;
-  const todayX = xOf(now);
+  const todayX = xOf(RANGE_START, now);
 
   // 关键线路：从并网里程碑反向追溯
   const critical = useMemo(() => {
     const set = new Set<string>();
-    const grid = allTasks(seed).find(x => x.task.name === '满足并网发电条件');
+    const grid = allTasks(seed).find(x => x.task.name.includes('并网') || x.task.name === '满足并网发电条件');
     if (!grid) return set;
     const map = new Map(allTasks(seed).map(x => [x.task.id, x.task]));
     const walk = (id: string) => {
@@ -55,14 +58,14 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
     };
     walk(grid.task.id);
     return set;
-  }, []);
+  }, [seed]);
 
   const affected = useMemo(() => {
     if (!selected) return new Set<string>();
     return new Set(propagation(seed, selected).affected);
-  }, [selected]);
+  }, [seed, selected]);
 
-  const down = useMemo(() => downstreamMap(seed), []);
+  const down = useMemo(() => downstreamMap(seed), [seed]);
 
   // 月份刻度
   const monthTicks = useMemo(() => {
@@ -71,12 +74,12 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
     let lastYear = -1;
     while (d <= RANGE_END) {
       const y = d.getFullYear();
-      ticks.push({ x: xOf(d), label: `${MONTHS[d.getMonth()]}`, year: y !== lastYear ? y : undefined });
+      ticks.push({ x: xOf(RANGE_START, d), label: `${MONTHS[d.getMonth()]}`, year: y !== lastYear ? y : undefined });
       lastYear = y;
       d.setMonth(d.getMonth() + 1);
     }
     return ticks;
-  }, []);
+  }, [RANGE_START, RANGE_END]);
 
   const rowFor = (task: Task) => {
     const act = state.actuals[task.id];
@@ -163,7 +166,7 @@ export default function Gantt({ onEdit }: { onEdit: (task: Task, section: string
                 const isSel = selected === task.id;
                 const isAff = affected.has(task.id);
                 const isCrit = showCritical && critical.has(task.id);
-                const planX = ps ? xOf(ps) : 0;
+                const planX = ps ? xOf(RANGE_START, ps) : 0;
                 const planW = ps && pe ? Math.max(DAY_W, (diffDays(ps, pe) + 1) * DAY_W) : DAY_W;
                 return (
                   <div key={task.id}

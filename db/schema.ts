@@ -73,6 +73,19 @@ export const alertClosures = mysqlTable("alert_closures", {
 });
 
 export type AlertClosure = typeof alertClosures.$inferSelect;
+
+/** 动态工作计划表（admin 导入新计划表时存这里；空则回退到 src/seed.json 内置版本） */
+export const projectSeed = mysqlTable("project_seed", {
+  id: serial("id").primaryKey(),
+  data: text("data").notNull(), // 存 ProjectSeed JSON 字符串
+  updatedBy: bigint("updatedBy", { mode: "number", unsigned: true }),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export type ProjectSeedRow = typeof projectSeed.$inferSelect;
 //
 // Example:
 // export const posts = mysqlTable("posts", {

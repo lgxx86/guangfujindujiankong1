@@ -1,6 +1,6 @@
 // 进度总览驾驶舱
 import { useMemo } from 'react';
-import { useStore, seed } from '@/lib/store';
+import { useStore } from '@/lib/store';
 import { allTasks, taskStatus, overallProgress, buildAlerts, today, toDate, diffDays, fmtCN, sectionProgress } from '@/lib/analysis';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 export default function Dashboard({ onGoAlerts }: { onGoAlerts: () => void }) {
-  const { state } = useStore();
+  const { seed, state } = useStore();
   const now = today();
 
   const stats = useMemo(() => {
@@ -26,7 +26,7 @@ export default function Dashboard({ onGoAlerts }: { onGoAlerts: () => void }) {
       else c.notStarted++;
     }
     return c;
-  }, [state.actuals]);
+  }, [seed, state.actuals]);
 
   const ov = overallProgress(seed, state.actuals, now);
   const alerts = buildAlerts(seed, state.actuals, state.closedAlerts, now);
@@ -39,7 +39,7 @@ export default function Dashboard({ onGoAlerts }: { onGoAlerts: () => void }) {
   const milestones = useMemo(() =>
     allTasks(seed).filter(x => x.task.milestone).map(x => ({
       ...x, status: taskStatus(x.task, state.actuals[x.task.id], now),
-    })), [state.actuals]);
+    })), [seed, state.actuals]);
 
   const deviation = ov.plan - ov.actual;
   const deviationTone = deviation > 3 ? 'bad' : deviation < -3 ? 'good' : 'sync';

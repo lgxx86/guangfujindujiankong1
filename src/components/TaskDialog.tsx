@@ -1,7 +1,7 @@
 // 任务详情与进度填报对话框
 import { useEffect, useState } from 'react';
 import type { Task } from '@/types';
-import { useStore, seed, ROLE_LABEL } from '@/lib/store';
+import { useStore, ROLE_LABEL } from '@/lib/store';
 import { trpc } from '@/providers/trpc';
 import { taskStatus, STATUS_LABEL, propagation, allTasks, fmtCN, toDate, delayDays, today } from '@/lib/analysis';
 import { toast } from 'sonner';
@@ -38,7 +38,7 @@ function compressPhoto(file: File): Promise<string> {
 export default function TaskDialog({ task, section, open, onClose }: {
   task: Task | null; section: string; open: boolean; onClose: () => void;
 }) {
-  const { state, updateTask, role, pendingTaskIds } = useStore();
+  const { seed, state, updateTask, role, pendingTaskIds } = useStore();
   const [progress, setProgress] = useState(0);
   const [actualStart, setActualStart] = useState('');
   const [actualEnd, setActualEnd] = useState('');
